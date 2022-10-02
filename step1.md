@@ -23,17 +23,27 @@
 <div class="step-title">Secondary indexes</div>
 
 Each table only supports a limited set of queries based on its primary key definition. 
-To support additional queries, the most generic and efficient solution is to duplicate the same data into 
-a new table with a different primary key. This process is frequently referred to as data *denormalization* and 
-data *duplication*. The drawback is that now you have to do multiple inserts, updates and deletes 
-to maintain the same data stored in multiple places. You may even need to use atomic batches in some cases. 
+Additional queries can be supported by creating new tables with different primary keys, 
+materialized views or *secondary indexes*. A *secondary index* can be created on a table column to enable 
+querying data based on values stored in this column. Internally, a secondary index is represented by 
+additional data structures that are created and automatically maintained on each cluster node. There are two types of secondary indexes:
+- *Regular secondary index* (*2i*): a secondary index that uses hash tables to index data and supports equality (`=`) predicates.
+- *SSTable-attached secondary index* (*SASI*): an experimental and more efficient secondary index that uses B+ trees to index data and can support equality (`=`), 
+inequality (`<`, `<=`, `>`, `>=`) and even text pattern matching (`LIKE`).
 
-To remove the burden of keeping multiple tables in sync from a developer, Cassandra supports 
-an experimental feature called *materialized views*. A *materialized view* is a read-only 
-table that automatically duplicates, persists and maintains a subset of data from a *base table*. Any change to data 
-in a base table is automatically propagated to every view associated with this table.   
+While secondary indexes may seem very convenient, they have serious performance limitations and their use in production 
+should be limited to the following two rather specific cases: 
+- *Real-time transactional query*: retrieving rows from a large multi-row partition, 
+when both a partition key and an indexed column are used in a query.
+- *Expensive analytical query*: retrieving a large number of rows from potentially all partitions, when 
+only an indexed *low-cardinality* column is used in a query. A low-cardinality column is characterized by 
+a large number of duplicates stored in it and a limited data range for its possible values. 
 
-Materialized views are great for convenience but you should also be aware of their limitations, which we discuss later in this presentation.
+For all other use cases, which usually involve *high-cardinality columns*, 
+you should always prefer tables and materialized views to secondary indexes.
+
+The general recommendation is to have at most one secondary index per table. And most tables do not need any. We 
+provide more details about the secondary index limitations later in this presentation.
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

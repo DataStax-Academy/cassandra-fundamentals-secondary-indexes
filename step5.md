@@ -22,52 +22,46 @@
 
 <div class="step-title">Using a 2i for equality queries</div>
 
-Next, create materialized view `users_by_date_joined` to be able to retrieve 
-users based on their joining date. For example, the view should support the following query:
+Next, create a secondary index to support 
+retrieving rows from table `ratings_by_movie` based on the `date_rated` column like in this query:
 
 <pre class="non-executable-code">
-SELECT * FROM users_by_date_joined
-WHERE date_joined = '2020-01-01';
+SELECT * FROM ratings_by_movie
+WHERE title      = 'Alice in Wonderland'
+  AND year       = 2010
+  AND date_rated = '2020-05-10';
 </pre>
 
-✅ Create the materialized view:
+✅ Create the 2i:
 <details>
   <summary>Solution</summary>
 
 ```
-CREATE MATERIALIZED VIEW IF NOT EXISTS 
-users_by_date_joined AS 
-  SELECT * FROM users
-  WHERE date_joined IS NOT NULL AND email IS NOT NULL
-PRIMARY KEY ((date_joined), email);
+CREATE INDEX IF NOT EXISTS 
+   date_rated_ratings_by_movie_2i 
+ON ratings_by_movie (date_rated);
 ```
 
 </details>
 
 <br/>
 
-✅ Retrieve users from the base table and materialized view:
+✅ Retrieve rows based on a date value: 
 <details>
   <summary>Solution</summary>
 
 ```
-SELECT * FROM users;
-SELECT * FROM users_by_date_joined;
-```
-
-</details>
-
-<br/>
-
-✅ Delete one user from the base table:
-<details>
-  <summary>Solution</summary>
+-- Real-time transactional query
+SELECT * FROM ratings_by_movie
+WHERE title      = 'Alice in Wonderland'
+  AND year       = 2010
+  AND date_rated = '2020-05-10';
+``` 
 
 ```
-DELETE FROM users WHERE email = 'jim@datastax.com';
-
-SELECT * FROM users;
-SELECT * FROM users_by_date_joined;
+-- Expensive analytical query
+SELECT * FROM ratings_by_movie
+WHERE date_rated = '2020-05-10';
 ```
 
 </details>

@@ -22,38 +22,36 @@
 
 <div class="step-title">Using a 2i for equality queries</div>
 
-Our first task is to create a materialized view with name `users_by_name` that will allow retrieving 
-users based on their names like in this query:
+Our first task is to create a secondary index to support 
+retrieving rows from table `ratings_by_movie` based on the `rating` column like in this query:
 
 <pre class="non-executable-code">
-SELECT * FROM users_by_name
-WHERE name = 'Joe';
+SELECT * FROM ratings_by_movie
+WHERE title  = 'Alice in Wonderland'
+  AND year   = 2010
+  AND rating = 9;
 </pre>
 
-We can use table `users` as a base table for the view.
-
-✅ Create the materialized view:
+✅ Create the 2i:
 ```
-CREATE MATERIALIZED VIEW IF NOT EXISTS 
-users_by_name AS 
-  SELECT * FROM users
-  WHERE name IS NOT NULL AND email IS NOT NULL
-PRIMARY KEY ((name), email);
+CREATE INDEX IF NOT EXISTS 
+   rating_ratings_by_movie_2i 
+ON ratings_by_movie (rating);
 ```
 
-✅ Retrieve users from the base table and materialized view:
+✅ Retrieve rows based on a rating value: 
 ```
-SELECT * FROM users;
-SELECT * FROM users_by_name;
+-- Real-time transactional query
+SELECT * FROM ratings_by_movie
+WHERE title  = 'Alice in Wonderland'
+  AND year   = 2010
+  AND rating = 9;
 ```
-
-✅ Update a base table row and verify the effect on the materialized view:
+ 
 ```
-UPDATE users SET name = 'Joseph' 
-WHERE email = 'joe@datastax.com';
-
-SELECT * FROM users WHERE email = 'joe@datastax.com';
-SELECT * FROM users_by_name WHERE name = 'Joseph';
+-- Expensive analytical query
+SELECT * FROM ratings_by_movie
+WHERE rating = 9;
 ```
 
 <!-- NAVIGATION -->

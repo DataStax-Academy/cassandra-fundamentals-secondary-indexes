@@ -22,59 +22,51 @@
 
 <div class="step-title">Using a SASI for range queries</div>
 
-Finally, create materialized view `movies_by_genre_country` to be able to support the 
-following query:
+Practice creating an SSTable-attached secondary index to support 
+retrieving rows from table `ratings_by_movie` based on the `date_rated` column 
+like in this query:
 
 <pre class="non-executable-code">
-SELECT * FROM movies_by_genre_country
-WHERE genre = 'Adventure' 
-  AND country = 'USA'
-  AND year >=2010
-ORDER BY year DESC;
+SELECT * FROM ratings_by_movie
+WHERE title  = 'Alice in Wonderland'
+  AND year   = 2010
+  AND date_rated >= '2020-05-01' 
+  AND date_rated < '2020-06-01';
 </pre>
 
-✅ Create the materialized view:
+✅ Create the SASI:
 <details>
   <summary>Solution</summary>
 
 ```
-CREATE MATERIALIZED VIEW IF NOT EXISTS 
-movies_by_genre_country AS 
-  SELECT * FROM movies_by_genre
-  WHERE genre IS NOT NULL AND country IS NOT NULL
-    AND title IS NOT NULL AND year IS NOT NULL
-PRIMARY KEY ((genre, country), year, title)
-WITH CLUSTERING ORDER BY (year DESC, title ASC);
+CREATE CUSTOM INDEX IF NOT EXISTS 
+   date_rated_ratings_by_movie_sasi 
+ON ratings_by_movie (date_rated)
+USING 'org.apache.cassandra.index.sasi.SASIIndex';
 ```
 
 </details>
 
 <br/>
 
-✅ Retrieve movies from the base table and materialized view:
+✅ Retrieve rows based on a date range: 
 <details>
   <summary>Solution</summary>
 
 ```
-SELECT * FROM movies_by_genre;
-SELECT * FROM movies_by_genre_country;
+-- Real-time transactional query
+SELECT * FROM ratings_by_movie
+WHERE title  = 'Alice in Wonderland'
+  AND year   = 2010
+  AND date_rated >= '2020-05-01' 
+  AND date_rated < '2020-06-01';
 ```
 
-</details>
-
-<br/>
-
-✅ Delete the *Alice in Wonderland* movie from the base table:
-<details>
-  <summary>Solution</summary>
-
 ```
-DELETE FROM movies_by_genre
-WHERE title = 'Alice in Wonderland' AND year = 2010
-  AND genre IN ('Fantasy','Adventure');
-
-SELECT * FROM movies_by_genre;
-SELECT * FROM movies_by_genre_country;
+-- Expensive analytical query
+SELECT * FROM ratings_by_movie
+WHERE date_rated >= '2020-05-01' 
+  AND date_rated < '2020-06-01';
 ```
 
 </details>

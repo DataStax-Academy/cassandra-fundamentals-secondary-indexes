@@ -22,49 +22,27 @@
 
 <div class="step-title">Secondary index limitations</div>
 
-First and foremost, it is possible that a materialized view and a base table 
-become out-of-sync. Cassandra does not provide a way to automatically detect and fix such inconsistencies 
-other than dropping and recreating the materialized view, which is not an ideal solution in production: 
+To understand secondary index limitations, let's take a closer look at how they work in comparison to Cassandra tables and 
+materialized views.
 
-```
-DROP MATERIALIZED VIEW users_by_name;
+Tables and materialized views are examples of *distributed indexing*. A table or view data structure is distributed across all nodes 
+in a cluster based on a partition key. When retrieving data using a partition key, Cassandra knows exactly which replica nodes may contain the result. 
+For example, given a `100`-node cluster with the replication factor of `5`, at most `5` replica nodes and `1` coordinator node need to participate 
+in a query.
 
-CREATE MATERIALIZED VIEW IF NOT EXISTS 
-users_by_name AS 
-  SELECT * FROM users
-  WHERE name IS NOT NULL AND email IS NOT NULL
-PRIMARY KEY ((name), email);
-```
+In contrast, secondary indexes are examples of *local indexing*. A secondary index is represented by many independent data structures that index data 
+stored on each node. When retrieving data using only an indexed column, Cassandra has no way to determine which nodes may have necessary data and 
+has to query all nodes in a cluster. For example, given a `100`-node cluster with any replication factor, all `100` nodes have to search 
+their local index data structures. This does not scale well.
 
-To substantially lower the risk of base-view inconsistency, use consistency levels `LOCAL_QUORUM` and higher for 
-base table writes. In addition, standard recommended repair procedures should be performed on both tables and views regularly or 
-whenever a node is removed, replaced or started back up. 
+Therefore, for real-time transactional queries, you should only use a secondary index when a partition key is also known, 
+such that your query retrieves rows from a known partition based on an indexed column. In this case, Cassandra takes advantage 
+of both distributed and local indexing.
 
-Second, in terms of performance, even though writes to base tables and views are asynchronous, 
-each materialized view slows down writes to its base table by approximately 10%. We recommend to not create more than two materialized views per table. 
-
-Finally, statement `CREATE MATERIALIZED VIEW` has restrictions on its query and primary key definitions that we previously discussed. In some cases, 
-it is simply impossible to use a materialized view, while a regular table is always an excellent option. Take a look at this example:
-
-
-```
--- View returns an error
-CREATE MATERIALIZED VIEW IF NOT EXISTS 
-users_by_name_age AS 
-  SELECT * FROM users
-  WHERE name IS NOT NULL AND email IS NOT NULL
-    AND age  IS NOT NULL
-PRIMARY KEY ((name, age), email);
-
--- Table works
-CREATE TABLE users_by_name_age (
-  email TEXT,
-  name TEXT,
-  age INT,
-  date_joined DATE,
-  PRIMARY KEY ((name, age), email)
-);
-```
+Secondary indexes can also be beneficial to distribute processing across all nodes in a cluster 
+for expensive analytical queries that retrieve a large subset of table rows based on a low-cardinality column. Such queries are generally run via *Spark-Cassandra Connector*, where 
+retrieved data is further processed using *Apache Spark™*. Note, however, that *Apache Solr™*-based search indexes can do substantially better 
+than secondary indexes in this use case.
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

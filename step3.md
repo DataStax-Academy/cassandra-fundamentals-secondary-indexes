@@ -29,7 +29,7 @@ cqlsh
 
 ✅ Create the keyspace:
 ```
-CREATE KEYSPACE killr_video
+CREATE KEYSPACE ks_indexes
 WITH replication = {
   'class': 'NetworkTopologyStrategy', 
   'DC-Houston': 1 };
@@ -37,43 +37,57 @@ WITH replication = {
 
 ✅ Create and populate the tables:
 ```
-USE killr_video;
+USE ks_indexes;
 
 CREATE TABLE users (
   email TEXT,
   name TEXT,
   age INT,
-  date_joined DATE,
+  location TEXT,
   PRIMARY KEY ((email))
 );
-INSERT INTO users (email, name, age, date_joined) 
-VALUES ('joe@datastax.com', 'Joe', 25, '2020-01-01');
-INSERT INTO users (email, name, age, date_joined) 
-VALUES ('jen@datastax.com', 'Jen', 27, '2020-01-01');
-INSERT INTO users (email, name, age, date_joined) 
-VALUES ('jim@datastax.com', 'Jim', 31, '2020-05-07');
+INSERT INTO users (email, name, age, location) 
+VALUES ('joe@datastax.com', 'Joe', 25, 'USA');
+INSERT INTO users (email, name, age, location) 
+VALUES ('jen@datastax.com', 'Jen', 27, 'UK');
+INSERT INTO users (email, name, age, location) 
+VALUES ('jim@datastax.com', 'Jim', 31, 'Canada');
+INSERT INTO users (email, name, age, location) 
+VALUES ('jon@datastax.com', 'Jon', 25, 'Mexico');
+INSERT INTO users (email, name, age, location) 
+VALUES ('job@datastax.com', 'Job', 40, 'Japan');
+INSERT INTO users (email, name, age, location) 
+VALUES ('joy@datastax.com', 'Joy', 40, 'Brazil');
 SELECT * FROM users;
 
-CREATE TABLE movies_by_genre (
-  genre TEXT,
+CREATE TABLE ratings_by_movie (
   title TEXT,
   year INT,
-  duration INT,
-  avg_rating FLOAT,
-  country TEXT,
-  PRIMARY KEY ((genre), title, year)
+  email TEXT,
+  rating INT,
+  date_rated DATE,
+  user_location TEXT,
+  PRIMARY KEY ((title, year), email)
 );
-INSERT INTO movies_by_genre (genre, title, year, duration, avg_rating, country) 
-VALUES ('Fantasy', 'Alice in Wonderland', 2010, 108, 8.33, 'USA');
-INSERT INTO movies_by_genre (genre, title, year, duration, avg_rating, country) 
-VALUES ('Adventure', 'Alice in Wonderland', 2010, 108, 8.33, 'USA');
-INSERT INTO movies_by_genre (genre, title, year, duration, avg_rating, country) 
-VALUES ('Adventure', 'The Extraordinary Adventures of Adele Blanc-Sec', 2010, 107, 6.30, 'France');
-INSERT INTO movies_by_genre (genre, title, year, duration, avg_rating, country) 
-VALUES ('Action', 'The Extraordinary Adventures of Adele Blanc-Sec', 2010, 107, 6.30, 'France');
-INSERT INTO movies_by_genre (genre, title, year, duration, avg_rating, country) 
-VALUES ('Adventure', 'How to Train Your Dragon', 2010, 98, 8.10, 'USA');
-SELECT * FROM movies_by_genre;
+INSERT INTO ratings_by_movie (title, year, email, rating, date_rated, user_location) 
+VALUES ('Alice in Wonderland', 2010, 'joe@datastax.com', 9, '2020-05-10', 'USA');
+INSERT INTO ratings_by_movie (title, year, email, rating, date_rated, user_location) 
+VALUES ('Alice in Wonderland', 2010, 'jen@datastax.com', 9, '2020-04-21', 'UK');
+INSERT INTO ratings_by_movie (title, year, email, rating, date_rated, user_location) 
+VALUES ('Alice in Wonderland', 2010, 'jim@datastax.com', 8, '2020-05-08', 'Canada');
+INSERT INTO ratings_by_movie (title, year, email, rating, date_rated, user_location) 
+VALUES ('Alice in Wonderland', 2010, 'jon@datastax.com', 4, '2020-06-10', 'Mexico');
+INSERT INTO ratings_by_movie (title, year, email, rating, date_rated, user_location) 
+VALUES ('Alice in Wonderland', 2010, 'job@datastax.com', 5, '2019-12-11', 'Japan');
+INSERT INTO ratings_by_movie (title, year, email, rating, date_rated, user_location) 
+VALUES ('Alice in Wonderland', 2010, 'joy@datastax.com', 10, '2020-05-22', 'Brazil');
+INSERT INTO ratings_by_movie (title, year, email, rating, date_rated, user_location) 
+VALUES ('Alice in Wonderland', 1951, 'joe@datastax.com', 7, '2020-03-01', 'USA');
+INSERT INTO ratings_by_movie (title, year, email, rating, date_rated, user_location) 
+VALUES ('Alice in Wonderland', 1951, 'jen@datastax.com', 6, '2020-05-17', 'UK');
+INSERT INTO ratings_by_movie (title, year, email, rating, date_rated, user_location) 
+VALUES ('Alice in Wonderland', 1951, 'joy@datastax.com', 9, '2020-05-10', 'Brazil');
+SELECT * FROM ratings_by_movie;
 ```
 
 <!-- NAVIGATION -->

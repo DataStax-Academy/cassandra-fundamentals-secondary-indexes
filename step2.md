@@ -22,35 +22,31 @@
 
 <div class="step-title">Syntax</div>
 
-To create a materialized view, Cassandra Query Language provides the `CREATE MATERIALIZED VIEW` statement with the following simplified syntax:
+To create regular secondary indexes (2i) and SSTable-attached secondary indexes (SASI), 
+Cassandra Query Language provides statements `CREATE INDEX` and `CREATE CUSTOM INDEX`, respectively, with the following simplified syntax:
 
 <pre class="non-executable-code">
-CREATE MATERIALIZED VIEW [ IF NOT EXISTS ] 
-[keyspace_name.] view_name AS 
-  SELECT * | column_name [ , ... ]
-  FROM [keyspace_name.] base_table_name
-  WHERE primary_key_column_name IS NOT NULL [ AND ... ] 
-PRIMARY KEY ( 
-  ( partition_key_column_name  [ , ... ] )
-  [ clustering_key_column_name [ , ... ] ]
-)  
-[ WITH CLUSTERING ORDER BY 
-  ( clustering_key_column_name ASC|DESC [ , ... ] )
-];
+CREATE INDEX [ IF NOT EXISTS ] 
+   index_name
+ON [keyspace_name.] table_name ( column_name ); 
 </pre>
 
-First, notice that a view is created within an existing keyspace. If a keyspace name is omitted, the current working keyspace is used.
+<pre class="non-executable-code">
+CREATE CUSTOM INDEX [ IF NOT EXISTS ] 
+   index_name
+ON [keyspace_name.] table_name ( column_name )
+USING 'org.apache.cassandra.index.sasi.SASIIndex' 
+[ WITH OPTIONS = { option_map } ];
+</pre>
 
-Second, what gets persisted into a view is defined by a `SELECT` statement.
+First, notice that an index is identified by a name and is created 
+on exactly one column of a given table. Indexes on multiple columns are not supported.
 
-Finally, a view primary key and an optional clustering order are defined simlarly to the respective `CREATE TABLE` definitions.
+Second, the main different between 2i and SASI definitions is in the `USING` clause with the index class.
 
-Most importantly, the following restrictions apply to any materialized view definition:
-- A view and a base table must belong to the same keyspace;
-- No base table static column can be included in a view;
-- All base table primary key columns must become materialized view primary key columns;
-- At most one base table non-primary key column can become a materialized view primary key column;
-- All view primary key columns must be restricted to not allow nulls.
+Finally, a SASI can have options, of which many are related to text analysis, tokenization, capitalization and so forth. 
+A special `mode` option allows choosing between `PREFIX` (default), `CONTAINS` and `SPARSE` indexes. For simplicity, we will 
+not use any explicit options with our SASI indexes but you are welcome to further explore SASI options in the documentation. 
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">

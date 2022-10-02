@@ -22,48 +22,30 @@
 
 <div class="step-title">Using a SASI with the LIKE operator</div>
 
-First and foremost, it is possible that a materialized view and a base table 
-become out-of-sync. Cassandra does not provide a way to automatically detect and fix such inconsistencies 
-other than dropping and recreating the materialized view, which is not an ideal solution in production: 
+Finally, let's create an SSTable-attached secondary index on column `user_location` of type `TEXT` to 
+see how the `LIKE` operator can be used.  
 
+✅ Create the SASI:
 ```
-DROP MATERIALIZED VIEW users_by_name;
-
-CREATE MATERIALIZED VIEW IF NOT EXISTS 
-users_by_name AS 
-  SELECT * FROM users
-  WHERE name IS NOT NULL AND email IS NOT NULL
-PRIMARY KEY ((name), email);
+CREATE CUSTOM INDEX IF NOT EXISTS 
+   user_location_ratings_by_movie_sasi 
+ON ratings_by_movie (user_location)
+USING 'org.apache.cassandra.index.sasi.SASIIndex';
 ```
 
-To substantially lower the risk of base-view inconsistency, use consistency levels `LOCAL_QUORUM` and higher for 
-base table writes. In addition, standard recommended repair procedures should be performed on both tables and views regularly or 
-whenever a node is removed, replaced or started back up. 
-
-Second, in terms of performance, even though writes to base tables and views are asynchronous, 
-each materialized view slows down writes to its base table by approximately 10%. We recommend to not create more than two materialized views per table. 
-
-Finally, statement `CREATE MATERIALIZED VIEW` has restrictions on its query and primary key definitions that we previously discussed. In some cases, 
-it is simply impossible to use a materialized view, while a regular table is always an excellent option. Take a look at this example:
-
+✅ Retrieve rows for countries starting with **U**: 
+```
+-- Real-time transactional query
+SELECT * FROM ratings_by_movie
+WHERE title  = 'Alice in Wonderland'
+  AND year   = 2010
+  AND user_location LIKE 'U%';
+```
 
 ```
--- View returns an error
-CREATE MATERIALIZED VIEW IF NOT EXISTS 
-users_by_name_age AS 
-  SELECT * FROM users
-  WHERE name IS NOT NULL AND email IS NOT NULL
-    AND age  IS NOT NULL
-PRIMARY KEY ((name, age), email);
-
--- Table works
-CREATE TABLE users_by_name_age (
-  email TEXT,
-  name TEXT,
-  age INT,
-  date_joined DATE,
-  PRIMARY KEY ((name, age), email)
-);
+-- Expensive analytical query
+SELECT * FROM ratings_by_movie
+WHERE user_location LIKE 'U%';
 ```
 
 <!-- NAVIGATION -->

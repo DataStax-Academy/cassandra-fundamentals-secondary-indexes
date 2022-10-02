@@ -22,40 +22,38 @@
 
 <div class="step-title">Using a SASI for range queries</div>
 
-Our third task is to create a materialized view with name `movies_by_genre_year` that will allow retrieving 
-movies based on their genres and release years like in this query:
+Our third task is to create an SSTable-attached secondary index to support 
+retrieving rows from table `ratings_by_movie` based on the `rating` column 
+like in this query:
 
 <pre class="non-executable-code">
-SELECT * FROM movies_by_genre_year
-WHERE genre = 'Adventure' AND year = 2010;
+SELECT * FROM ratings_by_movie
+WHERE title  = 'Alice in Wonderland'
+  AND year   = 2010
+  AND rating >= 8 AND rating <= 10;
 </pre>
 
-We can use table `movies_by_genre` as a base table for the view.
-
-✅ Create the materialized view:
+✅ Create the SASI:
 ```
-CREATE MATERIALIZED VIEW IF NOT EXISTS 
-movies_by_genre_year AS 
-  SELECT * FROM movies_by_genre
-  WHERE genre IS NOT NULL AND year IS NOT NULL
-    AND title IS NOT NULL
-PRIMARY KEY ((genre, year), title);
+CREATE CUSTOM INDEX IF NOT EXISTS 
+   rating_ratings_by_movie_sasi 
+ON ratings_by_movie (rating)
+USING 'org.apache.cassandra.index.sasi.SASIIndex';
 ```
 
-✅ Retrieve movies from the base table and materialized view:
+✅ Retrieve rows based on a rating range: 
 ```
-SELECT * FROM movies_by_genre;
-SELECT * FROM movies_by_genre_year;
+-- Real-time transactional query
+SELECT * FROM ratings_by_movie
+WHERE title  = 'Alice in Wonderland'
+  AND year   = 2010
+  AND rating >= 8 AND rating <= 10;
 ```
-
-✅ Update the *Alice in Wonderland* movie average rating:
+ 
 ```
-UPDATE movies_by_genre SET avg_rating = 8.44 
-WHERE title = 'Alice in Wonderland' AND year = 2010
-  AND genre IN ('Fantasy','Adventure');
-
-SELECT * FROM movies_by_genre;
-SELECT * FROM movies_by_genre_year;
+-- Expensive analytical query
+SELECT * FROM ratings_by_movie
+WHERE rating >= 8 AND rating <= 10;
 ```
 
 <!-- NAVIGATION -->
