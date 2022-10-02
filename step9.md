@@ -12,8 +12,8 @@
  <a href='command:katapod.loadPage?[{"step":"step8"}]'
    class="btn btn-dark navigation-top-left">⬅️ Back
  </a>
-<span class="step-count"> Step 9 of 9</span>
- <a href='command:katapod.loadPage?[{"step":"finish"}]'
+<span class="step-count"> Step 9 of 10</span>
+ <a href='command:katapod.loadPage?[{"step":"step10"}]'
     class="btn btn-dark navigation-top-right">Next ➡️
   </a>
 </div>
@@ -71,7 +71,7 @@ CREATE TABLE users_by_name_age (
  <a href='command:katapod.loadPage?[{"step":"step8"}]'
    class="btn btn-dark navigation-bottom-left">⬅️ Back
  </a>
- <a href='command:katapod.loadPage?[{"step":"finish"}]'
+ <a href='command:katapod.loadPage?[{"step":"step10"}]'
     class="btn btn-dark navigation-bottom-right">Next ➡️
   </a>
 </div>
