@@ -13,17 +13,18 @@
     <div class="container px-4 py-2">
      <div class="row g-4 py-2 row-cols-1 row-cols-lg-1">
       <div class="feature col div-choice">
-            <div class="scenario-description">Learn how and when to use materialized views in a Cassandra NoSQL database.</div>
+            <div class="scenario-description">Learn about secondary indexes (2i) and SSTable-attached secondary indexes (SASI) in a Cassandra NoSQL database.</div>
             <ul>
               <li><span class="scenario-description-attribute">Difficulty</span>: Intermediate</li>
               <li><span class="scenario-description-attribute">Time</span>: 20 minutes</li>
             </ul>
             <div class="scenario-objectives">In this hands-on lab, you will:</div>
             <ul>
-              <li><span class="scenario-objective">Understand the purpose of materialized views</span></li>
-              <li><span class="scenario-objective">Use CQL statement <code>CREATE MATERIALIZED VIEW</code></span></li>
-              <li><span class="scenario-objective">Explore several examples of using materialized views</span></li>
-              <li><span class="scenario-objective">Learn about limitations of materialized views</span></li>
+              <li><span class="scenario-objective">Understand the purpose and use cases of secondary indexes</span></li>
+              <li><span class="scenario-objective">Recognize the differences between 2i and SASI</span></li>
+              <li><span class="scenario-objective">Use CQL statements <code>CREATE INDEX</code> and <code>CREATE CUSTOM INDEX</code></span></li>
+              <li><span class="scenario-objective">Explore several examples of using secondary indexes</span></li>
+              <li><span class="scenario-objective">Learn about limitations of secondary indexes</span></li>
             </ul>
       </div>
      </div>

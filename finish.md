@@ -24,10 +24,11 @@
         <br/>
         <div class="scenario-objectives">In this hands-on lab, you learned about:</div>
         <ul>
-              <li><span class="scenario-objective">Materialized views</span></li>
-              <li><span class="scenario-objective">CQL statement <code>CREATE MATERIALIZED VIEW</code></span></li>
-              <li><span class="scenario-objective">Several examples of using materialized views</span></li>
-              <li><span class="scenario-objective">Limitations of materialized views</span></li>
+              <li><span class="scenario-objective">Purpose and use cases of secondary indexes</span></li>
+              <li><span class="scenario-objective">Differences between 2i and SASI</span></li>
+              <li><span class="scenario-objective">CQL statements <code>CREATE INDEX</code> and <code>CREATE CUSTOM INDEX</code></span></li>
+              <li><span class="scenario-objective">Several examples of using secondary indexes</span></li>
+              <li><span class="scenario-objective">Limitations of secondary indexes</span></li>
         </ul>
         <div class="resources">Learn more about Cassandra on <a href="https://datastax.com/dev" target="_blank">datastax.com/dev</a>:</div>
         <ul>
