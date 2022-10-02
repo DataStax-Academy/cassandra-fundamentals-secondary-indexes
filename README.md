@@ -1,4 +1,4 @@
-# Using Secondary Indexes in Apache Cassandra®
+# Secondary Indexes in Apache Cassandra®
 
 ## Learn about secondary indexes (2i) and SSTable-attached secondary indexes (SASI) in a Cassandra NoSQL database
 
