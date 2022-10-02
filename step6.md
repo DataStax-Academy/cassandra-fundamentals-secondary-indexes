@@ -20,7 +20,7 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Creating materialized view "movies_by_genre_year"</div>
+<div class="step-title">Using a SASI for range queries</div>
 
 Our third task is to create a materialized view with name `movies_by_genre_year` that will allow retrieving 
 movies based on their genres and release years like in this query:

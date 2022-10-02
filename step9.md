@@ -20,7 +20,7 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Materialized view limitations</div>
+<div class="step-title">Dropping secondary indexes</div>
 
 First and foremost, it is possible that a materialized view and a base table 
 become out-of-sync. Cassandra does not provide a way to automatically detect and fix such inconsistencies 

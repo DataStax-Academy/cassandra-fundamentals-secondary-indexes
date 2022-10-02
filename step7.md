@@ -20,7 +20,7 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Creating materialized view "movies_by_genre_country"</div>
+<div class="step-title">Using a SASI for range queries</div>
 
 Finally, create materialized view `movies_by_genre_country` to be able to support the 
 following query:

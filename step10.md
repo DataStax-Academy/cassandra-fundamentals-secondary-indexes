@@ -9,18 +9,18 @@
 
 <!-- NAVIGATION -->
 <div id="navigation-top" class="navigation-top">
- <a href='command:katapod.loadPage?[{"step":"step7"}]'
+ <a href='command:katapod.loadPage?[{"step":"step8"}]'
    class="btn btn-dark navigation-top-left">⬅️ Back
  </a>
-<span class="step-count"> Step 8 of 9</span>
- <a href='command:katapod.loadPage?[{"step":"step9"}]'
+<span class="step-count"> Step 9 of 9</span>
+ <a href='command:katapod.loadPage?[{"step":"finish"}]'
     class="btn btn-dark navigation-top-right">Next ➡️
   </a>
 </div>
 
 <!-- CONTENT -->
 
-<div class="step-title">Using a SASI with the LIKE operator</div>
+<div class="step-title">Secondary index limitations</div>
 
 First and foremost, it is possible that a materialized view and a base table 
 become out-of-sync. Cassandra does not provide a way to automatically detect and fix such inconsistencies 
@@ -68,10 +68,10 @@ CREATE TABLE users_by_name_age (
 
 <!-- NAVIGATION -->
 <div id="navigation-bottom" class="navigation-bottom">
- <a href='command:katapod.loadPage?[{"step":"step7"}]'
+ <a href='command:katapod.loadPage?[{"step":"step8"}]'
    class="btn btn-dark navigation-bottom-left">⬅️ Back
  </a>
- <a href='command:katapod.loadPage?[{"step":"step9"}]'
+ <a href='command:katapod.loadPage?[{"step":"finish"}]'
     class="btn btn-dark navigation-bottom-right">Next ➡️
   </a>
 </div>

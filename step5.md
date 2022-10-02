@@ -20,7 +20,7 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Creating materialized view "users_by_date_joined"</div>
+<div class="step-title">Using a 2i for equality queries</div>
 
 Next, create materialized view `users_by_date_joined` to be able to retrieve 
 users based on their joining date. For example, the view should support the following query:

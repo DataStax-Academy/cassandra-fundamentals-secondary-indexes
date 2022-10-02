@@ -20,7 +20,7 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Creating materialized view "users_by_name"</div>
+<div class="step-title">Using a 2i for equality queries</div>
 
 Our first task is to create a materialized view with name `users_by_name` that will allow retrieving 
 users based on their names like in this query:

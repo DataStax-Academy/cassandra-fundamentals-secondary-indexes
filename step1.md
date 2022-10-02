@@ -20,7 +20,7 @@
 
 <!-- CONTENT -->
 
-<div class="step-title">Materialized views</div>
+<div class="step-title">Secondary indexes</div>
 
 Each table only supports a limited set of queries based on its primary key definition. 
 To support additional queries, the most generic and efficient solution is to duplicate the same data into 
